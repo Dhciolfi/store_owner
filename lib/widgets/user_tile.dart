@@ -14,14 +14,16 @@ class UserTile extends StatelessWidget {
 
     double money = 0;
     int orders = querySnapshot.documents.length;
+    int finishedOrders = 0;
 
     for(DocumentSnapshot d in querySnapshot.documents){
       DocumentSnapshot order = await Firestore.instance.collection("orders").
-      document(d.documentID).get();
+        document(d.documentID).get();
       money += order.data["totalPrice"];
+      if(order.data["status"] == 4) finishedOrders += 1;
     }
 
-    return {"money": money, "orders": orders};
+    return {"money": money, "orders": orders, "finishedOrders": finishedOrders};
   }
 
   @override
@@ -36,13 +38,29 @@ class UserTile extends StatelessWidget {
               style: TextStyle(color: Colors.white),
             ),
             subtitle: Text(
-              "R\$${snapshot.data["money"]} gastos",
+              user["email"],
               style: TextStyle(color: Colors.white),
             ),
-            trailing: Text(
-              "${snapshot.data["orders"]}",
-              style: TextStyle(color: Colors.white),
+            trailing: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Text(
+                  "Pedidos: ${snapshot.data["orders"]}",
+                  style: TextStyle(color: Colors.white),
+                ),
+                Text(
+                  "Completos: ${snapshot.data["finishedOrders"]}",
+                  style: TextStyle(color: Colors.white),
+                ),
+                Text(
+                  "Gasto: R\$${snapshot.data["money"]}",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
             ),
+            onTap: (){
+
+            },
           );
         } else
           return Container(

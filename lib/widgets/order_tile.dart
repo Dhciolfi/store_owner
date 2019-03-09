@@ -80,12 +80,22 @@ class OrderTile extends StatelessWidget {
                             }
                         )
                       ),
-                      Text(
-                        "R\$${order.data["totalPrice"].toStringAsFixed(2)}",
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w500
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Text(
+                            "Products: R\$${order.data["productsPrice"].toStringAsFixed(2)}",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500
+                            ),
+                          ),
+                          Text(
+                            "Total: R\$${order.data["totalPrice"].toStringAsFixed(2)}",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500
+                            ),
+                          )
+                        ],
                       )
                     ],
                   ),

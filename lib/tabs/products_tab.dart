@@ -22,9 +22,14 @@ class _ProductsTabState extends State<ProductsTab> with AutomaticKeepAliveClient
             return CategoryTile(doc);
           },
           onDragFinish: (before, after) {
-            /*String data = items[before];
-            items.removeAt(before);
-            items.insert(after, data);*/
+            DocumentSnapshot d = snapshot.data.documents[before];
+            snapshot.data.documents.removeAt(before);
+            snapshot.data.documents.insert(after, d);
+
+            for(int i = 0; i < snapshot.data.documents.length; i++){
+              DocumentSnapshot d = snapshot.data.documents[i];
+              d.reference.updateData({"order": i});
+            }
           },
           canBeDraggedTo: (one, two) => true,
           dragElevation: 8.0,
