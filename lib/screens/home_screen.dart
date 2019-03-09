@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:store_owner/tabs/orders_tab.dart';
+import 'package:store_owner/tabs/products_tab.dart';
 import 'package:store_owner/tabs/users_tab.dart';
-import 'package:store_owner/widgets/category_tile.dart';
-import 'package:store_owner/widgets/drag_n_drop_list.dart';
 
 class HomeScreen extends StatefulWidget {
 
@@ -74,19 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             UsersTab(),
             OrdersTab(),
-            DragAndDropList<String>(
-              items,
-              itemBuilder: (BuildContext context, item) {
-                return CategoryTile();
-              },
-              onDragFinish: (before, after) {
-                String data = items[before];
-                items.removeAt(before);
-                items.insert(after, data);
-              },
-              canBeDraggedTo: (one, two) => true,
-              dragElevation: 8.0,
-            ),
+            ProductsTab(),
           ],
         )
       ),
