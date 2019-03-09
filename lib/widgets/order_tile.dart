@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shimmer/shimmer.dart';
 
 class OrderTile extends StatelessWidget {
 
@@ -7,16 +8,22 @@ class OrderTile extends StatelessWidget {
 
   final DocumentSnapshot order;
 
+  static final states = ["", "Em preparação",
+    "Em transporte",
+    "Aguardando Entrega",
+    "Entregue"
+    ];
+
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Card(
         child: ExpansionTile(
-          initiallyExpanded: true,
+          initiallyExpanded: order.data["status"] != 4,
           title: Text(
-            "#${order.documentID.substring(order.documentID.length - 7, order.documentID.length)} - Em preparação",
-            style: TextStyle(color: Colors.grey[850]),
+            "#${order.documentID.substring(order.documentID.length - 7, order.documentID.length)} - ${states[order.data["status"]]}",
+            style: TextStyle(color: order.data["status"] == 4 ? Colors.green : Colors.grey[850],),
           ),
           children: <Widget>[
             Padding(
@@ -29,13 +36,49 @@ class OrderTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Expanded(
-                        child: Column(
-                          children: <Widget>[
-                            Text("${order.data["clientId"]}", ),
-                            Text("Av. Brasil", ),
-                          ],
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                        ),
+                        child: FutureBuilder(
+                          future: Firestore.instance.collection("users").document(order.data["clientId"]).get(),
+                            builder: (context, snapshot){
+                              if(snapshot.hasData)
+                                return Column(
+                                  children: <Widget>[
+                                    Text("${snapshot.data["name"]}", ),
+                                    Text("${snapshot.data["address"]}", ),
+                                  ],
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                );
+                              else
+                                return Column(
+                                  children: <Widget>[
+                                    SizedBox(
+                                      width: 200,
+                                      height: 20,
+                                      child: Shimmer.fromColors(
+                                          child: Container(
+                                            color: Colors.white.withAlpha(50),
+                                            margin: EdgeInsets.symmetric(vertical: 4),
+                                          ),
+                                          baseColor: Colors.white,
+                                          highlightColor: Colors.grey
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 50,
+                                      height: 20,
+                                      child: Shimmer.fromColors(
+                                          child: Container(
+                                            color: Colors.white.withAlpha(50),
+                                            margin: EdgeInsets.symmetric(vertical: 4),
+                                          ),
+                                          baseColor: Colors.white,
+                                          highlightColor: Colors.grey
+                                      ),
+                                    ),
+                                  ],
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                );
+                            }
+                        )
                       ),
                       Text(
                         "R\$${order.data["totalPrice"].toStringAsFixed(2)}",
@@ -67,17 +110,23 @@ class OrderTile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       FlatButton(
-                        onPressed: (){},
+                        onPressed: (){
+
+                        },
                         textColor: Colors.red,
                         child: Text("Excluir"),
                       ),
                       FlatButton(
-                        onPressed: (){},
+                        onPressed: order.data["status"] > 1 ? (){
+                          order.reference.updateData({"status": order.data["status"]-1});
+                        } : null,
                         textColor: Colors.grey[850],
                         child: Text("Regredir"),
                       ),
                       FlatButton(
-                        onPressed: (){},
+                        onPressed: order.data["status"] < 4 ? (){
+                          order.reference.updateData({"status": order.data["status"]+1});
+                        } : null,
                         textColor: Colors.green,
                         child: Text("Avançar"),
                       ),
