@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OrderTile extends StatelessWidget {
+
+  OrderTile(this.order);
+
+  final DocumentSnapshot order;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -9,7 +15,7 @@ class OrderTile extends StatelessWidget {
         child: ExpansionTile(
           initiallyExpanded: true,
           title: Text(
-            "Em preparação #12345224",
+            "#${order.documentID.substring(order.documentID.length - 7, order.documentID.length)} - Em preparação",
             style: TextStyle(color: Colors.grey[850]),
           ),
           children: <Widget>[
@@ -25,14 +31,14 @@ class OrderTile extends StatelessWidget {
                       Expanded(
                         child: Column(
                           children: <Widget>[
-                            Text("Daniel Ciolfi", ),
+                            Text("${order.data["clientId"]}", ),
                             Text("Av. Brasil", ),
                           ],
                           crossAxisAlignment: CrossAxisAlignment.start,
                         ),
                       ),
                       Text(
-                        "R\$59,99",
+                        "R\$${order.data["totalPrice"].toStringAsFixed(2)}",
                         style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w500
@@ -41,39 +47,21 @@ class OrderTile extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 8,),
-                  ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.transparent,
-                      child: Image.network(
-                        "https://http2.mlstatic.com/kit-3-camiseta-branca-lisa-basica-camisa-malha-100-algodo-D_NQ_NP_165825-MLB25518372180_042017-F.jpg",
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    title: Text("Camiseta Branca"),
-                    trailing: Text(
-                      "2",
-                      style: TextStyle(
-                          fontSize: 20
-                      ),
-                    ),
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.transparent,
-                      child: Image.network(
-                        "https://http2.mlstatic.com/kit-6-camiseta-preta-basica-100-algodo-fio-30-fabrica-D_NQ_NP_535905-MLB25098889175_102016-F.jpg",
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    title: Text("Camiseta Preta"),
-                    trailing: Text(
-                      "1",
-                      style: TextStyle(
-                          fontSize: 20
-                      ),
-                    ),
-                    contentPadding: EdgeInsets.zero,
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: order.data["products"].map<Widget>((p){
+                      return ListTile(
+                        title: Text(p["product"]["title"] + " " + p["size"]),
+                        subtitle: Text(p["category"] + "/" + p["pid"]),
+                        trailing: Text(
+                          p["quantity"].toString(),
+                          style: TextStyle(
+                              fontSize: 20
+                          ),
+                        ),
+                        contentPadding: EdgeInsets.zero,
+                      );
+                    }).toList(),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

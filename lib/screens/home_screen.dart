@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:store_owner/tabs/orders_tab.dart';
+import 'package:store_owner/tabs/users_tab.dart';
 import 'package:store_owner/widgets/category_tile.dart';
 import 'package:store_owner/widgets/drag_n_drop_list.dart';
-import 'package:store_owner/widgets/order_tile.dart';
 
 class HomeScreen extends StatefulWidget {
 
@@ -71,54 +72,8 @@ class _HomeScreenState extends State<HomeScreen> {
             });
           },
           children: <Widget>[
-            Column(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: TextField(
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: "Pesquisar",
-                      hintStyle: TextStyle(
-                        color: Colors.white
-                      ),
-                      icon: Icon(Icons.search, color: Colors.white,),
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: ListView.separated(
-                    separatorBuilder: (context, index){
-                      return Divider();
-                    },
-                    itemCount: 15,
-                    itemBuilder: (context, index){
-                      return ListTile(
-                        title: Text(
-                          "Daniel",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        subtitle: Text(
-                          "R\$159.00 gastos",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        trailing: Text(
-                          "15",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      );
-                    },
-                  ),
-                )
-              ],
-            ),
-            ListView(
-              children: <Widget>[
-                OrderTile(),
-                OrderTile()
-              ],
-            ),
+            UsersTab(),
+            OrdersTab(),
             DragAndDropList<String>(
               items,
               itemBuilder: (BuildContext context, item) {

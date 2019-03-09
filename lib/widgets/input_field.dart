@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 
 class InputField extends StatelessWidget {
 
-  InputField({this.icon, this.hint, this.obscure});
+  InputField({this.icon, this.hint, this.obscure, this.controller});
 
   final IconData icon;
   final String hint;
   final bool obscure;
+  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +18,7 @@ class InputField extends StatelessWidget {
           )
       ),
       child: TextFormField(
+        controller: controller,
         decoration: InputDecoration(
             icon: Icon(icon, color: Colors.white,),
             border: InputBorder.none,

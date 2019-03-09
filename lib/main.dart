@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Store Owner',
-      home: ProductScreen(),
+      home: LoginScreen(),
       theme: ThemeData(primaryColor: Colors.pinkAccent),
       debugShowCheckedModeBanner: false,
     );
