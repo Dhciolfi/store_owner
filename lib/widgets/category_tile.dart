@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:store_owner/screens/ProductScreen.dart';
 
 class CategoryTile extends StatelessWidget {
 
@@ -18,7 +19,26 @@ class CategoryTile extends StatelessWidget {
               child: Image.network(category.data["icon"], fit: BoxFit.cover,),
             ),
             onTap: (){
+              showDialog(context: context,
+                builder: (context) => Dialog(
+                  child: ListTile(
+                    contentPadding: EdgeInsets.all(16),
+                    leading: CircleAvatar(
+                      child: Image.network(category.data["icon"], fit: BoxFit.cover,),
+                    ),
+                    title: TextFormField(
+                      style: TextStyle(color: Colors.grey[850], fontWeight: FontWeight.w500),
+                      initialValue: category.data["title"],
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.save),
+                      onPressed: (){
 
+                      },
+                    ),
+                  ),
+                )
+              );
             },
           ),
           title: Text(
@@ -45,6 +65,11 @@ class CategoryTile extends StatelessWidget {
                       trailing: Text(
                         "R\$${doc.data["price"].toStringAsFixed(2)}",
                       ),
+                      onTap: (){
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context)=>ProductScreen(product: doc,))
+                        );
+                      },
                     );
                   }).toList()..add(
                     ListTile(
@@ -54,7 +79,9 @@ class CategoryTile extends StatelessWidget {
                       ),
                       title: Text("Adicionar"),
                       onTap: (){
-
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context)=>ProductScreen())
+                        );
                       },
                     )
                   ),

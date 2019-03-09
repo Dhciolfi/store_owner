@@ -2,13 +2,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:store_owner/widgets/user_tile.dart';
 
-class UsersTab extends StatelessWidget {
+class UsersTab extends StatefulWidget {
+  @override
+  _UsersTabState createState() => _UsersTabState();
+}
+
+class _UsersTabState extends State<UsersTab> with AutomaticKeepAliveClientMixin{
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: TextField(
             style: TextStyle(color: Colors.white),
             decoration: InputDecoration(
@@ -19,6 +25,9 @@ class UsersTab extends StatelessWidget {
               icon: Icon(Icons.search, color: Colors.white,),
               border: InputBorder.none,
             ),
+            onSubmitted: (name){
+
+            },
           ),
         ),
         Expanded(
@@ -41,4 +50,7 @@ class UsersTab extends StatelessWidget {
       ],
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

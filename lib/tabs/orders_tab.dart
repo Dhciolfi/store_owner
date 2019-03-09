@@ -2,7 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:store_owner/widgets/order_tile.dart';
 
-class OrdersTab extends StatelessWidget {
+class OrdersTab extends StatefulWidget {
+  @override
+  _OrdersTabState createState() => _OrdersTabState();
+}
+
+class _OrdersTabState extends State<OrdersTab> with AutomaticKeepAliveClientMixin{
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -17,4 +22,7 @@ class OrdersTab extends StatelessWidget {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

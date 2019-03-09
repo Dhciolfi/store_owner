@@ -3,7 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:store_owner/widgets/category_tile.dart';
 import 'package:store_owner/widgets/drag_n_drop_list.dart';
 
-class ProductsTab extends StatelessWidget {
+class ProductsTab extends StatefulWidget {
+  @override
+  _ProductsTabState createState() => _ProductsTabState();
+}
+
+class _ProductsTabState extends State<ProductsTab> with AutomaticKeepAliveClientMixin{
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<QuerySnapshot>(
@@ -26,4 +32,7 @@ class ProductsTab extends StatelessWidget {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
