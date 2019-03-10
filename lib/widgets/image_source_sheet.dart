@@ -25,27 +25,27 @@ class ImageSourceSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomSheet(
-        onClosing: (){},
-        builder: (context) => Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            FlatButton(
-              child: Text("Câmera"),
-              onPressed: () async {
-                File image = await ImagePicker.pickImage(source: ImageSource.camera);
-                imageSelected(image);
-              },
-            ),
-            FlatButton(
-              child: Text("Galeria"),
-              onPressed: () async {
-                File image = await ImagePicker.pickImage(source: ImageSource.gallery);
-                imageSelected(image);
-              },
-            )
-          ],
-        )
+      onClosing: (){},
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          FlatButton(
+            child: Text("Câmera"),
+            onPressed: () async {
+              File image = await ImagePicker.pickImage(source: ImageSource.camera);
+              imageSelected(image);
+            },
+          ),
+          FlatButton(
+            child: Text("Galeria"),
+            onPressed: () async {
+              File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+              imageSelected(image);
+            },
+          )
+        ],
+      )
     );
   }
 }

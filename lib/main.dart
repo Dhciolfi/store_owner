@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Store Owner',
       home: LoginScreen(),
-      theme: ThemeData(primaryColor: Colors.pinkAccent),
+      theme: ThemeData(primaryColor: Colors.pinkAccent,),
       debugShowCheckedModeBanner: false,
     );
   }

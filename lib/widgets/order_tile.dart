@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shimmer/shimmer.dart';
+import 'package:store_owner/widgets/order_header.dart';
 
 class OrderTile extends StatelessWidget {
 
@@ -17,7 +17,7 @@ class OrderTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Card(
         child: ExpansionTile(
           initiallyExpanded: order.data["status"] != 4,
@@ -31,74 +31,7 @@ class OrderTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                        child: FutureBuilder(
-                          future: Firestore.instance.collection("users").document(order.data["clientId"]).get(),
-                            builder: (context, snapshot){
-                              if(snapshot.hasData)
-                                return Column(
-                                  children: <Widget>[
-                                    Text("${snapshot.data["name"]}", ),
-                                    Text("${snapshot.data["address"]}", ),
-                                  ],
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                );
-                              else
-                                return Column(
-                                  children: <Widget>[
-                                    SizedBox(
-                                      width: 200,
-                                      height: 20,
-                                      child: Shimmer.fromColors(
-                                          child: Container(
-                                            color: Colors.white.withAlpha(50),
-                                            margin: EdgeInsets.symmetric(vertical: 4),
-                                          ),
-                                          baseColor: Colors.white,
-                                          highlightColor: Colors.grey
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 50,
-                                      height: 20,
-                                      child: Shimmer.fromColors(
-                                          child: Container(
-                                            color: Colors.white.withAlpha(50),
-                                            margin: EdgeInsets.symmetric(vertical: 4),
-                                          ),
-                                          baseColor: Colors.white,
-                                          highlightColor: Colors.grey
-                                      ),
-                                    ),
-                                  ],
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                );
-                            }
-                        )
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Text(
-                            "Products: R\$${order.data["productsPrice"].toStringAsFixed(2)}",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500
-                            ),
-                          ),
-                          Text(
-                            "Total: R\$${order.data["totalPrice"].toStringAsFixed(2)}",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500
-                            ),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
+                  OrderHeader(order),
                   SizedBox(height: 8,),
                   Column(
                     mainAxisSize: MainAxisSize.min,

@@ -12,6 +12,8 @@ class _ProductsTabState extends State<ProductsTab> with AutomaticKeepAliveClient
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 16),
       child: FutureBuilder<QuerySnapshot>(

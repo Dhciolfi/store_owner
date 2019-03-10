@@ -19,7 +19,7 @@ class CategoryTile extends StatelessWidget {
             onTap: (){
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context)=>
-                    EditCategoryScreen(category: category)
+                  EditCategoryScreen(category: category)
                 )
               );
             },
@@ -34,8 +34,7 @@ class CategoryTile extends StatelessWidget {
           ),
           children: <Widget>[
             FutureBuilder<QuerySnapshot>(
-              future: Firestore.instance.collection("products").document(category.documentID)
-               .collection("items").getDocuments(),
+              future: category.reference.collection("items").getDocuments(),
               builder: (context, snapshot){
                 if(!snapshot.hasData) return Container();
                 return Column(

@@ -79,7 +79,9 @@ class _ProductScreenState extends State<ProductScreen> {
             icon: Icon(Icons.save),
             color: Colors.white,
             onPressed: () async {
-              if(_formKey.currentState.validate()){
+              if(_formKey.currentState.validate()
+                  && (unsavedData["images"].length != 0 || imagesToUpload.length != 0)
+                  && unsavedData["sizes"].length != 0){
                 _formKey.currentState.save();
 
                 ScaffoldFeatureController s = _scaffoldKey.currentState.showSnackBar(
@@ -150,17 +152,17 @@ class _ProductScreenState extends State<ProductScreen> {
                 }).toList()..addAll(
                   imagesToUpload.map<Widget>((i){
                     return Container(
-                        height: 100,
-                        width: 100,
-                        margin: EdgeInsets.only(right: 8),
-                        child: GestureDetector(
-                          child: Image.file(i, fit: BoxFit.cover,),
-                          onLongPress: (){
-                            setState(() {
-                              imagesToUpload.remove(i);
-                            });
-                          },
-                        )
+                      height: 100,
+                      width: 100,
+                      margin: EdgeInsets.only(right: 8),
+                      child: GestureDetector(
+                        child: Image.file(i, fit: BoxFit.cover,),
+                        onLongPress: (){
+                          setState(() {
+                            imagesToUpload.remove(i);
+                          });
+                        },
+                      )
                     );
                   }).toList()
                 )..add(

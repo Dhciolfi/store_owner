@@ -10,14 +10,16 @@ class OrdersTab extends StatefulWidget {
 class _OrdersTabState extends State<OrdersTab> with AutomaticKeepAliveClientMixin{
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 12),
+      padding: EdgeInsets.symmetric(vertical: 16),
       child: StreamBuilder<QuerySnapshot>(
         stream: Firestore.instance.collection("orders").snapshots(),
         builder: (context, snapshot){
           if(!snapshot.hasData) return Center(child: CircularProgressIndicator(),);
           snapshot.data.documents.sort((a, b){
-            if(a.data["status"] == 4 || a.data["status"] > b.data["status"]) return 1;
+            if(a.data["status"] == 4) return 1;
             else return 0;
           });
           return ListView(

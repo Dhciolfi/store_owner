@@ -21,6 +21,8 @@ class _UsersTabState extends State<UsersTab> with AutomaticKeepAliveClientMixin{
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Column(
       children: <Widget>[
         Padding(

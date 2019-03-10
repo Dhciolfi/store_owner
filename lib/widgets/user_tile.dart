@@ -62,8 +62,7 @@ class UserTile extends StatelessWidget {
 
             },
           );
-        } else
-          return Container(
+        } else return Container(
             margin: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,19 +76,19 @@ class UserTile extends StatelessWidget {
                         margin: EdgeInsets.symmetric(vertical: 4),
                       ),
                       baseColor: Colors.white,
-                      highlightColor: Colors.grey
+                      highlightColor: Colors.grey,
                   ),
                 ),
                 SizedBox(
                   width: 50,
                   height: 20,
                   child: Shimmer.fromColors(
-                      child: Container(
-                        color: Colors.white.withAlpha(50),
-                        margin: EdgeInsets.symmetric(vertical: 4),
-                      ),
-                      baseColor: Colors.white,
-                      highlightColor: Colors.grey
+                    child: Container(
+                      color: Colors.white.withAlpha(50),
+                      margin: EdgeInsets.symmetric(vertical: 4),
+                    ),
+                    baseColor: Colors.white,
+                    highlightColor: Colors.grey,
                   ),
                 ),
               ],
