@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:store_owner/screens/home_screen.dart';
@@ -23,9 +24,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
     FirebaseAuth.instance.currentUser().then((user){
       if(user != null){
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context)=>HomeScreen())
-        );
+        Firestore.instance.collection("admins").document(user.uid).get().then((doc){
+          if(doc.data != null){
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context)=>HomeScreen())
+            );
+          } else {
+            FirebaseAuth.instance.signOut();
+          }
+        }).catchError((e){
+
+        });
       }
     });
   }
@@ -47,9 +56,31 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     }
     if(user != null){
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context)=>HomeScreen())
-      );
+      Firestore.instance.collection("admins").document(user.uid).get().then((doc){
+        if(doc.data != null){
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context)=>HomeScreen())
+          );
+        } else {
+          FirebaseAuth.instance.signOut();
+          setState(() {
+            loading = false;
+          });
+          showDialog(context: context, builder: (context)=>AlertDialog(
+            title: Text("Erro"),
+            content: Text("Você não possui as autorizações necessárias!"),
+          ));
+        }
+      }).catchError((e){
+        FirebaseAuth.instance.signOut();
+        setState(() {
+          loading = false;
+        });
+        showDialog(context: context, builder: (context)=>AlertDialog(
+          title: Text("Erro"),
+          content: Text("Você não possui as autorizações necessárias!"),
+        ));
+      });
     } else {
       setState(() {
         loading = false;
@@ -64,6 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: loading ? Center(child: CircularProgressIndicator(),) : Stack(
         alignment: Alignment.center,
         children: <Widget>[
+          Container(),
           SingleChildScrollView(
             child: Container(
               margin: EdgeInsets.all(16),
@@ -74,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: <Widget>[
                   Icon(
                     Icons.store_mall_directory,
-                    color: Colors.white,
+                    color: Colors.pinkAccent,
                     size: 160,
                   ),
                   InputField(
@@ -93,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 32,
                   ),
                   Material(
-                    color: Colors.grey[800],
+                    color: Colors.pinkAccent,
                     child: InkWell(
                       onTap: _login,
                       child: Container(
@@ -115,17 +147,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
-          IgnorePointer(
-            child: Container(
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.transparent, Colors.white24],
-                    begin: Alignment.bottomLeft,
-                    end: Alignment.topRight,
-                  )
-              ),
-            ),
-          )
         ],
       )
     );
