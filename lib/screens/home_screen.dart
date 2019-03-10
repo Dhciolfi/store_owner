@@ -35,12 +35,12 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.grey[850],
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
-            canvasColor: Colors.grey[800],
+            canvasColor: Colors.pinkAccent,
             primaryColor: Colors.white,
             textTheme: Theme
                 .of(context)
                 .textTheme
-                .copyWith(caption: TextStyle(color: Colors.white24))),
+                .copyWith(caption: TextStyle(color: Colors.white54))),
         child: BottomNavigationBar(
           currentIndex: _page,
             onTap: (p){

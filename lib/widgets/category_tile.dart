@@ -17,6 +17,7 @@ class CategoryTile extends StatelessWidget {
           leading: InkWell(
             child: CircleAvatar(
               child: Image.network(category.data["icon"], fit: BoxFit.cover,),
+              backgroundColor: Colors.transparent,
             ),
             onTap: (){
               showDialog(context: context,

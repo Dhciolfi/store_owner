@@ -36,9 +36,10 @@ class _ProductScreenState extends State<ProductScreen> {
     if(product != null){
       unsavedData = Map.of(product.data);
       unsavedData["images"] = List<String>.from(product.data["images"]);
+      unsavedData["sizes"] = List<String>.from(product.data["sizes"]);
     } else {
       unsavedData = {
-        "images": [], "title": null, "description": null, "price": null
+        "images": [], "title": null, "description": null, "price": null, "sizes": []
       };
     }
   }
@@ -232,6 +233,47 @@ class _ProductScreenState extends State<ProductScreen> {
                   return "Preço inválido";
                 }
               },
+            ),
+            SizedBox(height: 16,),
+            SizedBox(
+              height: 34.0,
+              child: GridView(
+                padding: EdgeInsets.symmetric(vertical: 4.0),
+                scrollDirection: Axis.horizontal,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 1,
+                    mainAxisSpacing: 8.0,
+                    childAspectRatio: 0.5
+                ),
+                children: ["PP", "P", "M", "G", "GG", "XG", "XXG"].map(
+                    (s){
+                  return GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        if(unsavedData["sizes"].contains(s))
+                          unsavedData["sizes"].remove(s);
+                        else
+                          unsavedData["sizes"].add(s);
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                        border: Border.all(
+                          color: unsavedData["sizes"].contains(s) ? Colors.pinkAccent : Colors.grey[500],
+                          width: 3.0
+                        )
+                      ),
+                      width: 50.0,
+                      alignment: Alignment.center,
+                      child: Text(s,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  );
+                    }
+                ).toList(),
+              ),
             ),
           ],
         ),

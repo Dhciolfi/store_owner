@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:store_owner/screens/product_screen.dart';
-import 'package:store_owner/screens/home_screen.dart';
 import 'package:store_owner/screens/login_screen.dart';
 
 void main() => runApp(MyApp());

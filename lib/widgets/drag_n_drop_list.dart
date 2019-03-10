@@ -188,7 +188,7 @@ class _DragAndDropListState<T> extends State<DragAndDropList<T>> {
         _currentDraggingIndex = index;
         RenderBox rend = context3.findRenderObject();
         double start = rend.localToGlobal(new Offset(0.0, 0.0)).dy;
-        double end = rend.localToGlobal(new Offset(0.0, rend.semanticBounds.height)).dy;
+        //double end = rend.localToGlobal(new Offset(0.0, rend.semanticBounds.height)).dy;
 
         didJustStartDragging = true;
         _currentScrollPos = start;
@@ -329,11 +329,10 @@ class _DragAndDropListState<T> extends State<DragAndDropList<T>> {
 typedef void OnDragStarted(double height, double topPosition);
 
 
+// ignore: must_be_immutable
 class DraggableListItem extends StatelessWidget {
   final Data data;
   final int index;
-
-  final double _kScrollThreashhold = 80.0;
 
   final double draggedHeight;
 
@@ -397,7 +396,7 @@ class DraggableListItem extends StatelessWidget {
             onDragStarted(it.size.height, it.localToGlobal(it.semanticBounds.topCenter).dy);
           },
           onDragCompleted: onDragCompleted,
-          onMyDraggableCanceled: (_, _2) {
+          onMyDraggableCanceled: (_, _a) {
             cancelCallback();
           });
     }
