@@ -191,8 +191,8 @@ class _ProductScreenState extends State<ProductScreen> {
               style: TextStyle(color: Colors.white,
                   fontSize: 16),
               decoration: InputDecoration(
-                  hintText: "Título",
-                  hintStyle: TextStyle(color: Colors.grey),
+                  labelText: "Título",
+                  labelStyle: TextStyle(color: Colors.grey),
               ),
               initialValue: unsavedData["title"],
               onSaved: (text){unsavedData["title"] = text;},
@@ -205,8 +205,8 @@ class _ProductScreenState extends State<ProductScreen> {
                   fontSize: 16),
               maxLines: 6,
               decoration: InputDecoration(
-                  hintText: "Descrição",
-                  hintStyle: TextStyle(color: Colors.grey)
+                  labelText: "Descrição",
+                  labelStyle: TextStyle(color: Colors.grey)
               ),
               initialValue: unsavedData["description"],
               onSaved: (text){unsavedData["description"] = text;},
@@ -218,8 +218,8 @@ class _ProductScreenState extends State<ProductScreen> {
               style: TextStyle(color: Colors.white,
                   fontSize: 16),
               decoration: InputDecoration(
-                  hintText: "Preço",
-                  hintStyle: TextStyle(color: Colors.grey)
+                  labelText: "Preço",
+                  labelStyle: TextStyle(color: Colors.grey),
               ),
               keyboardType: TextInputType.number,
               initialValue: unsavedData["price"]?.toStringAsFixed(2),

@@ -12,29 +12,32 @@ class _ProductsTabState extends State<ProductsTab> with AutomaticKeepAliveClient
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<QuerySnapshot>(
-      future: Firestore.instance.collection("products").orderBy("order").getDocuments(),
-      builder: (context, snapshot){
-        if(!snapshot.hasData) return Center(child: CircularProgressIndicator(),);
-        return DragAndDropList<DocumentSnapshot>(
-          snapshot.data.documents,
-          itemBuilder: (BuildContext context, DocumentSnapshot doc) {
-            return CategoryTile(doc);
-          },
-          onDragFinish: (before, after) {
-            DocumentSnapshot d = snapshot.data.documents[before];
-            snapshot.data.documents.removeAt(before);
-            snapshot.data.documents.insert(after, d);
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 16),
+      child: FutureBuilder<QuerySnapshot>(
+        future: Firestore.instance.collection("products").orderBy("order").getDocuments(),
+        builder: (context, snapshot){
+          if(!snapshot.hasData) return Center(child: CircularProgressIndicator(),);
+          return DragAndDropList<DocumentSnapshot>(
+            snapshot.data.documents,
+            itemBuilder: (BuildContext context, DocumentSnapshot doc) {
+              return CategoryTile(doc);
+            },
+            onDragFinish: (before, after) {
+              DocumentSnapshot d = snapshot.data.documents[before];
+              snapshot.data.documents.removeAt(before);
+              snapshot.data.documents.insert(after, d);
 
-            for(int i = 0; i < snapshot.data.documents.length; i++){
-              DocumentSnapshot d = snapshot.data.documents[i];
-              d.reference.updateData({"order": i});
-            }
-          },
-          canBeDraggedTo: (one, two) => true,
-          dragElevation: 8.0,
-        );
-      },
+              for(int i = 0; i < snapshot.data.documents.length; i++){
+                DocumentSnapshot d = snapshot.data.documents[i];
+                d.reference.updateData({"order": i});
+              }
+            },
+            canBeDraggedTo: (one, two) => true,
+            dragElevation: 8.0,
+          );
+        },
+      ),
     );
   }
 

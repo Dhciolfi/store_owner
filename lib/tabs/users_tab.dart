@@ -9,6 +9,16 @@ class UsersTab extends StatefulWidget {
 
 class _UsersTabState extends State<UsersTab> with AutomaticKeepAliveClientMixin{
 
+  Future usersQuery;
+
+  String search;
+
+  @override
+  void initState() {
+    super.initState();
+    usersQuery = Firestore.instance.collection("users").getDocuments();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -26,22 +36,36 @@ class _UsersTabState extends State<UsersTab> with AutomaticKeepAliveClientMixin{
               border: InputBorder.none,
             ),
             onSubmitted: (name){
-
+              setState(() {
+                if(name.trim().isNotEmpty) search = name;
+                else search = null;
+              });
             },
           ),
         ),
         Expanded(
           child: FutureBuilder<QuerySnapshot>(
-            future: Firestore.instance.collection("users").getDocuments(),
+            future: usersQuery,
             builder: (context, snapshot){
               if(!snapshot.hasData) return Center(child: CircularProgressIndicator(),);
+
+              List<DocumentSnapshot> users = snapshot.data.documents;
+
+              if(search != null){
+                List<DocumentSnapshot> result = [];
+                users.forEach((d){
+                  if(d.data["name"].toUpperCase().contains(search.toUpperCase())) result.add(d);
+                });
+                users = result;
+              }
+
               return ListView.separated(
                 separatorBuilder: (context, index){
-                  return Divider();
+                  return Divider(height: 0.5, color: Colors.white,);
                 },
-                itemCount: snapshot.data.documents.length,
+                itemCount: users.length,
                 itemBuilder: (context, index){
-                  return UserTile(snapshot.data.documents[index]);
+                  return UserTile(users[index]);
                 },
               );
             }

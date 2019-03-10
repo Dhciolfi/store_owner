@@ -10,20 +10,23 @@ class OrdersTab extends StatefulWidget {
 class _OrdersTabState extends State<OrdersTab> with AutomaticKeepAliveClientMixin{
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection("orders").snapshots(),
-      builder: (context, snapshot){
-        if(!snapshot.hasData) return Center(child: CircularProgressIndicator(),);
-        snapshot.data.documents.sort((a, b){
-          if(a.data["status"] == 4 || a.data["status"] > b.data["status"]) return 1;
-          else return 0;
-        });
-        return ListView(
-          children: snapshot.data.documents.map((document){
-            return OrderTile(document);
-          }).toList(),
-        );
-      },
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 12),
+      child: StreamBuilder<QuerySnapshot>(
+        stream: Firestore.instance.collection("orders").snapshots(),
+        builder: (context, snapshot){
+          if(!snapshot.hasData) return Center(child: CircularProgressIndicator(),);
+          snapshot.data.documents.sort((a, b){
+            if(a.data["status"] == 4 || a.data["status"] > b.data["status"]) return 1;
+            else return 0;
+          });
+          return ListView(
+            children: snapshot.data.documents.map((document){
+              return OrderTile(document);
+            }).toList(),
+          );
+        },
+      ),
     );
   }
 

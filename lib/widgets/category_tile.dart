@@ -14,33 +14,9 @@ class CategoryTile extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Card(
         child: ExpansionTile(
-          leading: InkWell(
-            child: CircleAvatar(
-              child: Image.network(category.data["icon"], fit: BoxFit.cover,),
-              backgroundColor: Colors.transparent,
-            ),
-            onTap: (){
-              showDialog(context: context,
-                builder: (context) => Dialog(
-                  child: ListTile(
-                    contentPadding: EdgeInsets.all(16),
-                    leading: CircleAvatar(
-                      child: Image.network(category.data["icon"], fit: BoxFit.cover,),
-                    ),
-                    title: TextFormField(
-                      style: TextStyle(color: Colors.grey[850], fontWeight: FontWeight.w500),
-                      initialValue: category.data["title"],
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(Icons.save),
-                      onPressed: (){
-
-                      },
-                    ),
-                  ),
-                )
-              );
-            },
+          leading: CircleAvatar(
+            child: Image.network(category.data["icon"], fit: BoxFit.cover,),
+            backgroundColor: Colors.transparent,
           ),
           title: Text(
             category.data["title"],
