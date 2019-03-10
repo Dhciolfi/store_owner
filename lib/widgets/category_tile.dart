@@ -67,7 +67,7 @@ class CategoryTile extends StatelessWidget {
                       ),
                       onTap: (){
                         Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context)=>ProductScreen(product: doc,))
+                          MaterialPageRoute(builder: (context)=>ProductScreen(product: doc, categoryId: category.documentID,))
                         );
                       },
                     );

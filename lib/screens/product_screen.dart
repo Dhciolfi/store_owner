@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:store_owner/widgets/image_source_sheet.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class ProductScreen extends StatefulWidget {
 
@@ -21,6 +25,7 @@ class _ProductScreenState extends State<ProductScreen> {
   String categoryId;
 
   Map<String, dynamic> unsavedData;
+  List<File> imagesToUpload = [];
 
   _ProductScreenState(this.product, this.categoryId);
 
@@ -30,6 +35,7 @@ class _ProductScreenState extends State<ProductScreen> {
 
     if(product != null){
       unsavedData = Map.of(product.data);
+      unsavedData["images"] = List<String>.from(product.data["images"]);
     } else {
       unsavedData = {
         "images": [], "title": null, "description": null, "price": null
@@ -37,14 +43,37 @@ class _ProductScreenState extends State<ProductScreen> {
     }
   }
 
+  Future uploadImages(String productId) async {
+    for(File img in imagesToUpload){
+      StorageUploadTask uploadTask = FirebaseStorage.instance.ref().child(categoryId).
+        child(productId).child(DateTime.now().millisecondsSinceEpoch.toString()).putFile(img);
+      StorageTaskSnapshot s = await uploadTask.onComplete;
+      String downloadUrl = await s.ref.getDownloadURL();
+      unsavedData["images"].add(downloadUrl);
+    }
+    setState(() {
+      imagesToUpload.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
+      backgroundColor: Colors.grey[850],
       appBar: AppBar(
         elevation: 0,
         title: Text(widget.product != null ? "Editar Produto" : "Criar Produto"),
         actions: <Widget>[
+          product != null ?
+            IconButton(
+              icon: Icon(Icons.remove),
+              onPressed: (){
+                product.reference.delete();
+                Navigator.of(context).pop();
+              },
+            ):
+              Container(),
           IconButton(
             icon: Icon(Icons.save),
             color: Colors.white,
@@ -53,27 +82,36 @@ class _ProductScreenState extends State<ProductScreen> {
                 _formKey.currentState.save();
 
                 ScaffoldFeatureController s = _scaffoldKey.currentState.showSnackBar(
-                    SnackBar(content: Text("Salvando produto..."))
+                    SnackBar(
+                      content: Text("Salvando produto...", style: TextStyle(color: Colors.white),),
+                      duration: Duration(minutes: 1),
+                      backgroundColor: Colors.pinkAccent,
+                    )
                 );
 
                 try {
-                  if(product != null)
+                  if(product != null) {
+                    await uploadImages(product.documentID);
                     await product.reference.updateData(unsavedData);
-                  else
-                    await Firestore.instance.collection("products").document(categoryId)
-                      .collection("items").add(unsavedData);
+                  } else {
+                    DocumentReference d = await Firestore.instance.collection("products").document(
+                        categoryId)
+                        .collection("items").add(unsavedData);
+                    await uploadImages(d.documentID);
+                    await d.updateData(unsavedData);
+                  }
                   s.close();
                   _scaffoldKey.currentState.showSnackBar(
-                      SnackBar(content: Text("Produto salvo!"))
+                      SnackBar(content: Text("Produto salvo!", style: TextStyle(color: Colors.white),),
+                        backgroundColor: Colors.pinkAccent,
+                      )
                   );
                 } catch (e){
-                  _scaffoldKey.currentState.showSnackBar(
-                      SnackBar(content: Text("Falha ao salvar produto!"))
-                  );
+
                 }
               }
             },
-          )
+          ),
         ],
       ),
       body: Form(
@@ -108,12 +146,41 @@ class _ProductScreenState extends State<ProductScreen> {
                       },
                     )
                   );
-                }).toList()..add(
-                  Container(
-                    height: 100,
-                    width: 100,
-                    child: Icon(Icons.camera_enhance, color: Colors.white,),
-                    color: Colors.white.withAlpha(50),
+                }).toList()..addAll(
+                  imagesToUpload.map<Widget>((i){
+                    return Container(
+                        height: 100,
+                        width: 100,
+                        margin: EdgeInsets.only(right: 8),
+                        child: GestureDetector(
+                          child: Image.file(i, fit: BoxFit.cover,),
+                          onLongPress: (){
+                            setState(() {
+                              imagesToUpload.remove(i);
+                            });
+                          },
+                        )
+                    );
+                  }).toList()
+                )..add(
+                  GestureDetector(
+                    child: Container(
+                      height: 100,
+                      width: 100,
+                      child: Icon(Icons.camera_enhance, color: Colors.white,),
+                      color: Colors.white.withAlpha(50),
+                    ),
+                    onTap: (){
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) => ImageSourceSheet((image){
+                          Navigator.of(context).pop();
+                          setState(() {
+                            imagesToUpload.add(image);
+                          });
+                        })
+                      );
+                    },
                   )
                 ),
               ),
@@ -169,7 +236,6 @@ class _ProductScreenState extends State<ProductScreen> {
           ],
         ),
       ),
-      backgroundColor: Colors.grey[850],
     );
   }
 }
