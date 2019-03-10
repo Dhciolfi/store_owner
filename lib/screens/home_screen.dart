@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:store_owner/screens/edit_category_screen.dart';
 import 'package:store_owner/tabs/orders_tab.dart';
 import 'package:store_owner/tabs/products_tab.dart';
 import 'package:store_owner/tabs/users_tab.dart';
@@ -81,7 +82,13 @@ class _HomeScreenState extends State<HomeScreen> {
        FloatingActionButton(
          child: Icon(Icons.add),
          backgroundColor: Colors.pinkAccent,
-         onPressed: (){},
+         onPressed: (){
+           Navigator.of(context).push(
+               MaterialPageRoute(builder: (context)=>
+                   EditCategoryScreen()
+               )
+           );
+         },
        ),
     );
   }
