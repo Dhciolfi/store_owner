@@ -54,10 +54,10 @@ class OrderTile extends StatelessWidget {
                     children: <Widget>[
                       FlatButton(
                         onPressed: (){
-                          order.reference.delete();
                           Firestore.instance.collection("users").
                             document(order["clientId"]).collection("orders").
                             document(order.documentID).delete();
+                          order.reference.delete();
                         },
                         textColor: Colors.red,
                         child: Text("Excluir"),

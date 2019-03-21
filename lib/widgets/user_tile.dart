@@ -19,6 +19,9 @@ class UserTile extends StatelessWidget {
     for(DocumentSnapshot d in querySnapshot.documents){
       DocumentSnapshot order = await Firestore.instance.collection("orders").
         document(d.documentID).get();
+
+      if(order.data == null) continue;
+
       money += order.data["totalPrice"];
       if(order.data["status"] == 4) finishedOrders += 1;
     }
