@@ -16,6 +16,7 @@ class _UsersTabState extends State<UsersTab> with AutomaticKeepAliveClientMixin{
   @override
   void initState() {
     super.initState();
+    print("initStateUsersTab");
     usersQuery = Firestore.instance.collection("users").getDocuments();
   }
 
@@ -23,6 +24,7 @@ class _UsersTabState extends State<UsersTab> with AutomaticKeepAliveClientMixin{
   Widget build(BuildContext context) {
     super.build(context);
 
+    print("buildUsersTab");
     return Column(
       children: <Widget>[
         Padding(
@@ -49,7 +51,9 @@ class _UsersTabState extends State<UsersTab> with AutomaticKeepAliveClientMixin{
           child: FutureBuilder<QuerySnapshot>(
             future: usersQuery,
             builder: (context, snapshot){
-              if(!snapshot.hasData) return Center(child: CircularProgressIndicator(),);
+              if(!snapshot.hasData) return Center(child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.pinkAccent),
+              ),);
 
               List<DocumentSnapshot> users = snapshot.data.documents;
 

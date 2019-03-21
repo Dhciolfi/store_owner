@@ -12,7 +12,7 @@ class UserTile extends StatelessWidget {
     QuerySnapshot querySnapshot = await Firestore.instance.collection("users").
     document(user.documentID).collection("orders").getDocuments();
 
-    double money = 0;
+    double money = 0.0;
     int orders = querySnapshot.documents.length;
     int finishedOrders = 0;
 
@@ -56,7 +56,7 @@ class UserTile extends StatelessWidget {
                   style: TextStyle(color: Colors.white),
                 ),
                 Text(
-                  "Gasto: R\$${snapshot.data["money"]}",
+                  "Gasto: R\$${snapshot.data["money"].toStringAsFixed(2)}",
                   style: TextStyle(color: Colors.white),
                 ),
               ],
