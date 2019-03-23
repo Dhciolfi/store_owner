@@ -79,6 +79,10 @@ class UsersModel extends Model {
   List<Map<String, dynamic>> get users {
     return search == null ? _users.values.toList() : _filter(search);
   }
+
+  Map<String, Map<String, dynamic>> get allUsers {
+    return _users;
+  }
   
   void searchName(String name){
     search = name;
