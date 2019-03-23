@@ -26,7 +26,6 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
 
   _EditCategoryScreenState(this.category);
 
-
   @override
   void initState() {
     super.initState();

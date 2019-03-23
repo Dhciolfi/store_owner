@@ -15,8 +15,6 @@ class ImageSourceSheet extends StatelessWidget {
         sourcePath: image.path,
         ratioX: 1.0,
         ratioY: 1.0,
-        maxWidth: 512,
-        maxHeight: 512,
       );
       onImageSelected(croppedFile);
     }

@@ -1,36 +1,18 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:store_owner/models/users_model.dart';
 import 'package:store_owner/widgets/user_tile.dart';
 
-class UsersTab extends StatefulWidget {
-  @override
-  _UsersTabState createState() => _UsersTabState();
-}
-
-class _UsersTabState extends State<UsersTab> with AutomaticKeepAliveClientMixin{
-
-  Future usersQuery;
-
-  String search;
-
-  @override
-  void initState() {
-    super.initState();
-    print("initStateUsersTab");
-    usersQuery = Firestore.instance.collection("users").getDocuments();
-  }
-
+class UsersTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
-    print("buildUsersTab");
     return Column(
       children: <Widget>[
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: TextField(
             style: TextStyle(color: Colors.white),
+            controller: TextEditingController(text: ScopedModel.of<UsersModel>(context).search),
             decoration: InputDecoration(
               hintText: "Pesquisar",
               hintStyle: TextStyle(
@@ -39,48 +21,46 @@ class _UsersTabState extends State<UsersTab> with AutomaticKeepAliveClientMixin{
               icon: Icon(Icons.search, color: Colors.white,),
               border: InputBorder.none,
             ),
-            onSubmitted: (name){
-              setState(() {
-                if(name.trim().isNotEmpty) search = name;
-                else search = null;
-              });
+            onChanged: (name){
+              UsersModel usersModel = ScopedModel.of<UsersModel>(context);
+
+              if(name.trim().isNotEmpty) usersModel.searchName(name);
+              else usersModel.cancelSearch();
             },
           ),
         ),
         Expanded(
-          child: FutureBuilder<QuerySnapshot>(
-            future: usersQuery,
-            builder: (context, snapshot){
-              if(!snapshot.hasData) return Center(child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.pinkAccent),
-              ),);
-
-              List<DocumentSnapshot> users = snapshot.data.documents;
-
-              if(search != null){
-                List<DocumentSnapshot> result = [];
-                users.forEach((d){
-                  if(d.data["name"].toUpperCase().contains(search.toUpperCase())) result.add(d);
-                });
-                users = result;
-              }
-
-              return ListView.separated(
-                separatorBuilder: (context, index){
-                  return Divider(height: 0.5, color: Colors.white,);
-                },
-                itemCount: users.length,
-                itemBuilder: (context, index){
-                  return UserTile(users[index]);
-                },
-              );
+          child: ScopedModelDescendant<UsersModel>(
+            builder: (context, child, model){
+              if(model.users.isEmpty && model.search.isEmpty)
+                return Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.pinkAccent),
+                  ),
+                );
+              else if(model.users.isEmpty)
+                return Center(
+                  child: Text(
+                    "Nenhum usuário encontrado!",
+                    style: TextStyle(
+                      color: Colors.white
+                    ),
+                  )
+                );
+              else
+                return ListView.separated(
+                  separatorBuilder: (context, index){
+                    return Divider(height: 0.5, color: Colors.white,);
+                  },
+                  itemCount: model.users.length,
+                  itemBuilder: (context, index){
+                    return UserTile(model.users[index]);
+                  },
+                );
             }
           )
         )
       ],
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }
