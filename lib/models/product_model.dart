@@ -23,7 +23,7 @@ class ProductModel extends Model {
       unsavedData = {
         "title": null, "description": null, "price": null, "images": [], "sizes": []
       };
-      
+
       createdProduct = false;
     }
   }
