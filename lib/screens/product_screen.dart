@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:scoped_model/scoped_model.dart';
 import 'package:store_owner/blocs/product_bloc.dart';
-import 'package:store_owner/models/product_model.dart';
 import 'package:store_owner/validators/product_validators.dart';
 import 'package:store_owner/widgets/images_widget.dart';
 

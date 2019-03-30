@@ -19,7 +19,7 @@ class _ProductsTabState extends State<ProductsTab> with AutomaticKeepAliveClient
       child: FutureBuilder<QuerySnapshot>(
         future: Firestore.instance.collection("products").orderBy("order").getDocuments(),
         builder: (context, snapshot){
-          if(!snapshot.hasData) return Center(child: CircularProgressIndicator(),);
+          if(!snapshot.hasData) return Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(Colors.pinkAccent),),);
           return DragAndDropList<DocumentSnapshot>(
             snapshot.data.documents,
             itemBuilder: (BuildContext context, DocumentSnapshot doc) {

@@ -1,7 +1,7 @@
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:scoped_model/scoped_model.dart';
-import 'package:store_owner/models/users_model.dart';
+import 'package:store_owner/blocs/users_bloc.dart';
 
 class OrderHeader extends StatelessWidget {
 
@@ -12,17 +12,17 @@ class OrderHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    UsersModel usersModel = ScopedModel.of<UsersModel>(context);
+    final usersBloc = BlocProvider.of<UsersBloc>(context);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Expanded(
-          child: usersModel.allUsers.containsKey(order.data["clientId"]) ? Column(
+          child: usersBloc.allUsers.containsKey(order.data["clientId"]) ? Column(
             children: <Widget>[
-              Text("${usersModel.allUsers[order.data["clientId"]]["name"]}", ),
-              Text("${usersModel.allUsers[order.data["clientId"]]["address"]}", ),
+              Text("${usersBloc.allUsers[order.data["clientId"]]["name"]}", ),
+              Text("${usersBloc.allUsers[order.data["clientId"]]["address"]}", ),
             ],
             crossAxisAlignment: CrossAxisAlignment.start,
           ) : Container()

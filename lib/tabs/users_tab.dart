@@ -1,18 +1,20 @@
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
-import 'package:scoped_model/scoped_model.dart';
-import 'package:store_owner/models/users_model.dart';
+import 'package:store_owner/blocs/users_bloc.dart';
 import 'package:store_owner/widgets/user_tile.dart';
 
 class UsersTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
+    final usersBloc = BlocProvider.of<UsersBloc>(context);
+
     return Column(
       children: <Widget>[
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: TextField(
             style: TextStyle(color: Colors.white),
-            controller: TextEditingController(text: ScopedModel.of<UsersModel>(context).search),
             decoration: InputDecoration(
               hintText: "Pesquisar",
               hintStyle: TextStyle(
@@ -21,24 +23,20 @@ class UsersTab extends StatelessWidget {
               icon: Icon(Icons.search, color: Colors.white,),
               border: InputBorder.none,
             ),
-            onChanged: (name){
-              UsersModel usersModel = ScopedModel.of<UsersModel>(context);
-
-              if(name.trim().isNotEmpty) usersModel.searchName(name);
-              else usersModel.cancelSearch();
-            },
+            onChanged: usersBloc.onSearchChanged,
           ),
         ),
         Expanded(
-          child: ScopedModelDescendant<UsersModel>(
-            builder: (context, child, model){
-              if(model.users.isEmpty && model.search.isEmpty)
+          child: StreamBuilder<List>(
+            stream: usersBloc.outUsers,
+            builder: (context, snapshot){
+              if(!snapshot.hasData)
                 return Center(
                   child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.pinkAccent),
                   ),
                 );
-              else if(model.users.isEmpty)
+              else if(snapshot.data.isEmpty)
                 return Center(
                   child: Text(
                     "Nenhum usuário encontrado!",
@@ -52,9 +50,9 @@ class UsersTab extends StatelessWidget {
                   separatorBuilder: (context, index){
                     return Divider(height: 0.5, color: Colors.white,);
                   },
-                  itemCount: model.users.length,
+                  itemCount: snapshot.data.length,
                   itemBuilder: (context, index){
-                    return UserTile(model.users[index]);
+                    return UserTile(snapshot.data[index]);
                   },
                 );
             }

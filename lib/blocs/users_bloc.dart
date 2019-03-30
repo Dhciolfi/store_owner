@@ -1,15 +1,19 @@
-import 'package:scoped_model/scoped_model.dart';
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rxdart/rxdart.dart';
 
-class UsersModel extends Model {
+class UsersBloc extends BlocBase {
+
+  final _usersController = BehaviorSubject<List>();
+
+  Stream<List> get outUsers => _usersController.stream;
+
 
   Firestore _firestore = Firestore.instance;
 
   Map<String, Map<String, dynamic>> _users = Map();
 
-  String search;
-
-  UsersModel(){
+  UsersBloc(){
     _addUsersListener();
   }
 
@@ -26,12 +30,12 @@ class UsersModel extends Model {
             break;
           case DocumentChangeType.modified:
             _users[change.document.documentID].addAll(change.document.data);
-            notifyListeners();
+            _usersController.add(_users.values.toList());
             break;
           case DocumentChangeType.removed:
             _unsubscribeToOrders(uid);
             _users.remove(uid);
-            notifyListeners();
+            _usersController.add(_users.values.toList());
             break;
         }
       });
@@ -40,7 +44,7 @@ class UsersModel extends Model {
 
   void _subscribeToOrders(String uid) {
     _users[uid]["subscription"] = _firestore.collection("users").document(uid).
-      collection("orders").snapshots().listen((orders) async {
+    collection("orders").snapshots().listen((orders) async {
 
       int numOrders = orders.documents.length;
 
@@ -59,7 +63,7 @@ class UsersModel extends Model {
         "money": money, "orders": numOrders,
       });
 
-      notifyListeners();
+      _usersController.add(_users.values.toList());
 
     });
   }
@@ -76,22 +80,27 @@ class UsersModel extends Model {
     return filteredUsers;
   }
 
-  List<Map<String, dynamic>> get users {
-    return search == null ? _users.values.toList() : _filter(search);
+  void _searchName(String name){
+    _usersController.add(_filter(name));
+  }
+
+  void _cancelSearch(){
+    _usersController.add(_users.values.toList());
+  }
+
+  void onSearchChanged(String text){
+    if(text.trim().isNotEmpty) _searchName(text);
+    else _cancelSearch();
   }
 
   Map<String, Map<String, dynamic>> get allUsers {
     return _users;
   }
-  
-  void searchName(String name){
-    search = name;
-    notifyListeners();
+
+  @override
+  void dispose() {
+    _usersController.close();
   }
 
-  void cancelSearch(){
-    search = null;
-    notifyListeners();
-  }
 
 }

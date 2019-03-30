@@ -32,6 +32,7 @@ dependencies:
   scoped_model: ^1.0.1
   flutter_speed_dial: ^1.1.1
   rxdart: ^0.21.0
+  bloc_pattern: ^1.5.2
 
 dev_dependencies:
   flutter_test:

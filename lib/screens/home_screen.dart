@@ -1,14 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:store_owner/blocs/users_bloc.dart';
 import 'package:store_owner/models/orders_model.dart';
-import 'package:store_owner/models/users_model.dart';
 import 'package:store_owner/screens/edit_category_screen.dart';
 import 'package:store_owner/screens/login_screen.dart';
 import 'package:store_owner/tabs/orders_tab.dart';
 import 'package:store_owner/tabs/products_tab.dart';
 import 'package:store_owner/tabs/users_tab.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:bloc_pattern/bloc_pattern.dart';
 
 class HomeScreen extends StatefulWidget {
 
@@ -21,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   PageController _pageController;
   int _page = 1;
 
-  UsersModel _usersModel;
+  UsersBloc _usersBloc;
   OrdersModel _ordersModel;
 
   @override
@@ -29,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     _pageController = PageController(initialPage: 1);
-    _usersModel = UsersModel();
+    _usersBloc = UsersBloc();
     _ordersModel = OrdersModel();
   }
 
@@ -88,9 +89,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         body: SafeArea(
-          child: ScopedModel<UsersModel>(
-            model: _usersModel,
-            child: ScopedModel(
+          child: BlocProvider<UsersBloc>(
+            bloc: _usersBloc,
+            child: ScopedModel<OrdersModel>(
                 model: _ordersModel,
                 child: PageView(
                   controller: _pageController,
