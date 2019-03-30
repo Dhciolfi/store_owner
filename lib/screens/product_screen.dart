@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:store_owner/blocs/product_bloc.dart';
 import 'package:store_owner/models/product_model.dart';
+import 'package:store_owner/validators/product_validators.dart';
 import 'package:store_owner/widgets/images_widget.dart';
 
 class ProductScreen extends StatefulWidget {
@@ -15,138 +17,140 @@ class ProductScreen extends StatefulWidget {
   _ProductScreenState createState() => _ProductScreenState(product, categoryId);
 }
 
-class _ProductScreenState extends State<ProductScreen> {
+class _ProductScreenState extends State<ProductScreen> with ProductValidators{
 
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final ProductModel _productModel;
+  final ProductBloc _productBloc;
 
   _ProductScreenState(DocumentSnapshot product, String categoryId) :
-        _productModel = ProductModel(categoryId: categoryId, product: product);
+        _productBloc = ProductBloc(categoryId: categoryId, product: product);
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<ProductModel>(
-      model: _productModel,
-      child: Scaffold(
-        key: _scaffoldKey,
-        backgroundColor: Colors.grey[850],
-        appBar: AppBar(
-          elevation: 0,
-          title: ScopedModelDescendant<ProductModel>(
-            builder: (context, child, model){
-              return Text(model.createdProduct ? "Editar Produto" : "Criar Produto");
+
+    InputDecoration _buildDecoration(String label){
+      return InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: Colors.grey),
+      );
+    }
+
+    final _fieldStyle = TextStyle(
+      color: Colors.white,
+      fontSize: 16,
+    );
+
+    return Scaffold(
+      key: _scaffoldKey,
+      backgroundColor: Colors.grey[850],
+      appBar: AppBar(
+        elevation: 0,
+        title: StreamBuilder<bool>(
+          stream: _productBloc.outCreatedProduct,
+          builder: (context, snapshot){
+            if(snapshot.hasData) return Text(snapshot.data ? "Editar Produto" : "Criar Produto");
+            return Container();
+          },
+        ),
+        actions: <Widget>[
+          StreamBuilder<bool>(
+            stream: _productBloc.outCreatedProduct,
+            initialData: false,
+            builder: (context, snapshot){
+              return snapshot.data ?
+              StreamBuilder<bool>(
+                stream: _productBloc.outLoading,
+                initialData: false,
+                builder: (context, snapshot){
+                  return IconButton(
+                    icon: Icon(Icons.remove),
+                    onPressed: snapshot.data ? null : (){
+                      _productBloc.deleteProduct();
+                      Navigator.of(context).pop();
+                    },
+                  );
+                },
+              ):
+              Container();
             },
           ),
-          actions: <Widget>[
-            ScopedModelDescendant<ProductModel>(
-              builder: (context, child, model){
-                return model.createdProduct ?
-                IconButton(
-                  icon: Icon(Icons.remove),
-                  onPressed: model.loading ? null : (){
-                    model.deleteProduct();
-                    Navigator.of(context).pop();
-                  },
-                ):
-                Container();
-              },
-            ),
-            ScopedModelDescendant<ProductModel>(
-              builder: (context, child, model){
-                return IconButton(
-                    icon: Icon(Icons.save),
-                    color: Colors.white,
-                    onPressed: model.loading ? null : saveProduct
-                );
-              },
-            )
-          ],
-        ),
-        body: Stack(
-          children: [
-            Form(
-            key: _formKey,
-            child: ListView(
-              shrinkWrap: true,
-              padding: EdgeInsets.all(16),
-              children: <Widget>[
-                Text(
-                  "Imagens",
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 12,
-                  ),
-                ),
-                ImagesWidget(_productModel.unsavedData["images"]),
-                SizedBox(height: 16,),
-                TextFormField(
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: "Título",
-                    labelStyle: TextStyle(color: Colors.grey),
-                  ),
-                  initialValue: _productModel.unsavedData["title"],
-                  onSaved: (text){_productModel.unsavedData["title"] = text;},
-                  validator: (text){
-                    if(text.trim().isEmpty) return "Preencha o título do produto";
-                  },
-                ),
-                TextFormField(
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16),
-                  maxLines: 6,
-                  decoration: InputDecoration(
-                      labelText: "Descrição",
-                      labelStyle: TextStyle(color: Colors.grey)
-                  ),
-                  initialValue: _productModel.unsavedData["description"],
-                  onSaved: (text){_productModel.unsavedData["description"] = text;},
-                  validator: (text){
-                    if(text.trim().isEmpty) return "Preencha a descrição do produto";
-                  },
-                ),
-                TextFormField(
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16),
-                  decoration: InputDecoration(
-                    labelText: "Preço",
-                    labelStyle: TextStyle(color: Colors.grey),
-                  ),
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  initialValue: _productModel.unsavedData["price"]?.toStringAsFixed(2),
-                  onSaved: (text){_productModel.unsavedData["price"] = double.parse(text);},
-                  validator: (text){
-                    double price = double.tryParse(text);
-                    if(price != null){
-                      if(!text.contains(".") || text.split(".")[1].length != 2)
-                        return "Utilize 2 casas decimais";
-                    } else {
-                      return "Preço inválido";
-                    }
-                  },
-                ),
-              ],
-            ),
-          ),
-          ScopedModelDescendant<ProductModel>(
-            builder: (context, child, model) {
-              return IgnorePointer(
-                ignoring: !model.loading,
-                child: Container(
-                  color: model.loading ? Colors.black54 : Colors.transparent,
-                ),
+          StreamBuilder<bool>(
+            stream: _productBloc.outLoading,
+            initialData: false,
+            builder: (context, snapshot){
+              return IconButton(
+                  icon: Icon(Icons.save),
+                  color: Colors.white,
+                  onPressed: snapshot.data ? null : saveProduct
               );
             },
           )
-        ]
-        ),
+        ],
+      ),
+      body: Stack(
+          children: [
+            Form(
+              key: _formKey,
+              child: StreamBuilder<Map>(
+                stream: _productBloc.outData,
+                builder: (context, snapshot) {
+                  if(!snapshot.hasData) return CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(Colors.pinkAccent),);
+                  return ListView(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.all(16),
+                    children: <Widget>[
+                      Text(
+                        "Imagens",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                      ImagesWidget(snapshot.data["images"]),
+                      SizedBox(height: 16,),
+                      TextFormField(
+                        style: _fieldStyle,
+                        decoration: _buildDecoration("Title"),
+                        initialValue: snapshot.data["title"],
+                        onSaved: _productBloc.setTitle,
+                        validator: validateTitle,
+                      ),
+                      TextFormField(
+                        maxLines: 6,
+                        style: _fieldStyle,
+                        decoration: _buildDecoration("Description"),
+                        initialValue: snapshot.data["description"],
+                        onSaved: _productBloc.setDescription,
+                        validator: validateDescription,
+                      ),
+                      TextFormField(
+                        style: _fieldStyle,
+                        decoration: _buildDecoration("Price"),
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
+                        initialValue: snapshot.data["price"]?.toStringAsFixed(2),
+                        onSaved: _productBloc.setPrice,
+                        validator: validatePrice
+                      ),
+                    ],
+                  );
+                }
+              ),
+            ),
+            StreamBuilder<bool>(
+              stream: _productBloc.outLoading,
+              initialData: false,
+              builder: (context, snapshot) {
+                return IgnorePointer(
+                  ignoring: !snapshot.data,
+                  child: Container(
+                    color: snapshot.data ? Colors.black54 : Colors.transparent,
+                  ),
+                );
+              },
+            )
+          ]
       ),
     );
   }
@@ -156,14 +160,14 @@ class _ProductScreenState extends State<ProductScreen> {
       _formKey.currentState.save();
 
       ScaffoldFeatureController s = _scaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          content: Text("Salvando produto...", style: TextStyle(color: Colors.white),),
-          duration: Duration(minutes: 1),
-          backgroundColor: Colors.pinkAccent,
-        )
+          SnackBar(
+            content: Text("Salvando produto...", style: TextStyle(color: Colors.white),),
+            duration: Duration(minutes: 1),
+            backgroundColor: Colors.pinkAccent,
+          )
       );
 
-      bool success = await _productModel.saveProduct();
+      bool success = await _productBloc.saveProduct();
 
       s.close();
 
@@ -175,5 +179,11 @@ class _ProductScreenState extends State<ProductScreen> {
           )
       );
     }
+  }
+
+  @override
+  void dispose() {
+    _productBloc.dispose();
+    super.dispose();
   }
 }

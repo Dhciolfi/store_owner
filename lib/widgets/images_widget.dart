@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:store_owner/widgets/image_source_sheet.dart';
+import 'package:store_owner/validators/product_validators.dart';
 
 class ImagesWidget extends StatefulWidget {
 
@@ -11,15 +12,13 @@ class ImagesWidget extends StatefulWidget {
   _ImagesWidgetState createState() => _ImagesWidgetState();
 }
 
-class _ImagesWidgetState extends State<ImagesWidget> {
+class _ImagesWidgetState extends State<ImagesWidget> with ProductValidators {
 
   @override
   Widget build(BuildContext context) {
     return FormField(
-      validator: (value){
-        if(widget.images.isEmpty)
-          return "Adicione imagens";
-      },
+      validator: validateImages,
+      initialValue: widget.images,
       builder: (formFieldState) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -28,7 +27,7 @@ class _ImagesWidgetState extends State<ImagesWidget> {
             padding: EdgeInsets.only(top: 16, bottom: 8),
             child: ListView(
               scrollDirection: Axis.horizontal,
-              children: widget.images.map<Widget>((i){
+              children: (widget.images != null ? widget.images.map<Widget>((i){
                 return Container(
                     height: 100,
                     width: 100,
@@ -42,7 +41,7 @@ class _ImagesWidgetState extends State<ImagesWidget> {
                       },
                     )
                 );
-              }).toList()..add(
+              }).toList() : [])..add(
                   GestureDetector(
                     child: Container(
                       height: 100,
