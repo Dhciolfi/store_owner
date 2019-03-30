@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:store_owner/blocs/orders_bloc.dart';
 import 'package:store_owner/blocs/users_bloc.dart';
-import 'package:store_owner/models/orders_model.dart';
 import 'package:store_owner/screens/edit_category_screen.dart';
 import 'package:store_owner/screens/login_screen.dart';
 import 'package:store_owner/tabs/orders_tab.dart';
@@ -23,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _page = 1;
 
   UsersBloc _usersBloc;
-  OrdersModel _ordersModel;
+  OrdersBloc _ordersBloc;
 
   @override
   void initState() {
@@ -31,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _pageController = PageController(initialPage: 1);
     _usersBloc = UsersBloc();
-    _ordersModel = OrdersModel();
+    _ordersBloc = OrdersBloc();
   }
 
 
@@ -91,8 +90,8 @@ class _HomeScreenState extends State<HomeScreen> {
         body: SafeArea(
           child: BlocProvider<UsersBloc>(
             bloc: _usersBloc,
-            child: ScopedModel<OrdersModel>(
-                model: _ordersModel,
+            child: BlocProvider<OrdersBloc>(
+                bloc: _ordersBloc,
                 child: PageView(
                   controller: _pageController,
                   onPageChanged: (p){
@@ -131,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
               label: "Concluídos Abaixo",
               labelStyle: TextStyle(fontSize: 14),
               onTap: (){
-                _ordersModel.setOrderCriteria(SortCriteria.READY_LAST);
+                _ordersBloc.setOrderCriteria(SortCriteria.READY_LAST);
               }
             ),
             SpeedDialChild(
@@ -140,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 label: "Concluídos Acima",
                 labelStyle: TextStyle(fontSize: 14),
                 onTap: (){
-                  _ordersModel.setOrderCriteria(SortCriteria.READY_FIRST);
+                  _ordersBloc.setOrderCriteria(SortCriteria.READY_FIRST);
                 }
             ),
           ],

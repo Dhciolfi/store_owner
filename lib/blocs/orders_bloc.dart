@@ -1,19 +1,24 @@
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:rxdart/rxdart.dart';
 
 enum SortCriteria {READY_FIRST, READY_LAST}
 
-class OrdersModel extends Model {
+class OrdersBloc extends BlocBase {
+
+  final _ordersController = BehaviorSubject<List>();
+
+  Stream<List> get outOrders => _ordersController.stream;
 
   Firestore _firestore = Firestore.instance;
 
   List<DocumentSnapshot> _orders = List();
 
-  OrdersModel(){
+  SortCriteria _sortCriteria;
+
+  OrdersBloc(){
     _addOrdersListener();
   }
-
-  SortCriteria _sortCriteria;
 
   void _addOrdersListener(){
     _firestore.collection("orders").snapshots().listen((snapshot){
@@ -64,7 +69,7 @@ class OrdersModel extends Model {
         break;
     }
 
-    notifyListeners();
+    _ordersController.add(_orders);
   }
 
   void setOrderCriteria(SortCriteria criteria){
@@ -73,8 +78,8 @@ class OrdersModel extends Model {
     _sort();
   }
 
-  List<DocumentSnapshot> get orders {
-    return _orders;
+  @override
+  void dispose() {
+    _ordersController.close();
   }
-
 }
