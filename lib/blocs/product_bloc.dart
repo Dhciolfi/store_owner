@@ -9,10 +9,12 @@ class ProductBloc {
   final _createdProductController = BehaviorSubject<bool>();
   final _loadingController = BehaviorSubject<bool>();
   final _dataController = BehaviorSubject<Map>();
+  final _sizesController = BehaviorSubject<List>();
 
   Stream<bool> get outCreatedProduct => _createdProductController.stream;
   Stream<bool> get outLoading => _loadingController.stream;
   Stream<Map> get outData => _dataController.stream;
+  Stream<List> get outSizes => _sizesController.stream;
 
   DocumentSnapshot product;
   String categoryId;
@@ -36,6 +38,7 @@ class ProductBloc {
       _createdProductController.add(false);
     }
 
+    _sizesController.add(unsavedData["sizes"]);
     _dataController.add(unsavedData);
   }
 
@@ -53,6 +56,16 @@ class ProductBloc {
 
   void deleteProduct(){
     product.reference.delete();
+  }
+
+  void addSize(String size){
+    unsavedData["sizes"].add(size);
+    _sizesController.add(unsavedData["sizes"]);
+  }
+
+  void removeSize(String size){
+    unsavedData["sizes"].remove(size);
+    _sizesController.add(unsavedData["sizes"]);
   }
 
   Future<bool> saveProduct() async {
@@ -96,6 +109,7 @@ class ProductBloc {
     _createdProductController.close();
     _loadingController.close();
     _dataController.close();
+    _sizesController.close();
   }
 
 }

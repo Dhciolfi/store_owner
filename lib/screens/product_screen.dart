@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:store_owner/blocs/product_bloc.dart';
 import 'package:store_owner/validators/product_validators.dart';
 import 'package:store_owner/widgets/images_widget.dart';
+import 'package:store_owner/widgets/product_sizes.dart';
 
 class ProductScreen extends StatefulWidget {
 
@@ -100,7 +101,7 @@ class _ProductScreenState extends State<ProductScreen> with ProductValidators{
                     padding: EdgeInsets.all(16),
                     children: <Widget>[
                       Text(
-                        "Imagens",
+                        "Images",
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: 12,
@@ -110,7 +111,7 @@ class _ProductScreenState extends State<ProductScreen> with ProductValidators{
                       SizedBox(height: 16,),
                       TextFormField(
                         style: _fieldStyle,
-                        decoration: _buildDecoration("Title"),
+                        decoration: _buildDecoration("Título"),
                         initialValue: snapshot.data["title"],
                         onSaved: _productBloc.setTitle,
                         validator: validateTitle,
@@ -118,19 +119,28 @@ class _ProductScreenState extends State<ProductScreen> with ProductValidators{
                       TextFormField(
                         maxLines: 6,
                         style: _fieldStyle,
-                        decoration: _buildDecoration("Description"),
+                        decoration: _buildDecoration("Descrição"),
                         initialValue: snapshot.data["description"],
                         onSaved: _productBloc.setDescription,
                         validator: validateDescription,
                       ),
                       TextFormField(
                         style: _fieldStyle,
-                        decoration: _buildDecoration("Price"),
+                        decoration: _buildDecoration("Preço"),
                         keyboardType: TextInputType.numberWithOptions(decimal: true),
                         initialValue: snapshot.data["price"]?.toStringAsFixed(2),
                         onSaved: _productBloc.setPrice,
                         validator: validatePrice
                       ),
+                      SizedBox(height: 16,),
+                      Text(
+                        "Tamanhos",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                      ProductSizes(_productBloc)
                     ],
                   );
                 }
@@ -147,7 +157,7 @@ class _ProductScreenState extends State<ProductScreen> with ProductValidators{
                   ),
                 );
               },
-            )
+            ),
           ]
       ),
     );
@@ -172,7 +182,6 @@ class _ProductScreenState extends State<ProductScreen> with ProductValidators{
       _scaffoldKey.currentState.showSnackBar(
           SnackBar(
             content: Text(success ? "Produto salvo!" : "Erro ao salvar produto!", style: TextStyle(color: Colors.white),),
-            duration: Duration(minutes: 1),
             backgroundColor: Colors.pinkAccent,
           )
       );

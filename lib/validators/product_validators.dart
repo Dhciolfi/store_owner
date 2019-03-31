@@ -26,4 +26,9 @@ class ProductValidators {
     return null;
   }
 
+  String validateSizes(List sizes){
+    if(sizes.isEmpty) return "Adicione tamanhos";
+    return null;
+  }
+
 }
