@@ -114,7 +114,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
                           )
                         );
 
-                        if(loadedImage != null){
+                        if(loadedImage != null && _titleController.text.isNotEmpty){
                           StorageUploadTask task = FirebaseStorage.instance.ref().child("icons").
                             child(_titleController.text)
                               .putFile(loadedImage);
@@ -134,7 +134,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
                               "icon": url
                             });
                           }
-                        } else {
+                        } else if (_titleController.text.isNotEmpty){
                           await category.reference.updateData({
                             "title": _titleController.text,
                           });
