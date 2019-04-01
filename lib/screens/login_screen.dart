@@ -1,18 +1,24 @@
-import 'dart:async';
-
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
 import 'package:store_owner/blocs/login_bloc.dart';
 import 'package:store_owner/screens/home_screen.dart';
 import 'package:store_owner/widgets/input_field.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+
   final LoginBloc _loginBloc = LoginBloc();
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
 
     _loginBloc.outState.listen((state) {
+      print(state);
       switch(state){
         case LoginState.SUCCESS:
           Navigator.of(context).pushReplacement(
@@ -29,7 +35,10 @@ class LoginScreen extends StatelessWidget {
         case LoginState.IDLE:
       }
     });
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return BlocProvider<LoginBloc>(
       bloc: _loginBloc,
       child: Scaffold(
