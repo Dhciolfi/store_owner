@@ -2,26 +2,23 @@ import 'package:flutter/material.dart';
 
 class InputField extends StatelessWidget {
 
-  InputField({this.icon, this.hint, this.obscure, this.controller});
+  InputField({this.icon, this.hint, this.obscure, this.stream, this.onChanged});
 
   final IconData icon;
   final String hint;
   final bool obscure;
-  final TextEditingController controller;
+  final Stream<String> stream;
+  final Function(String) onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          border: Border(
-              bottom: BorderSide(color: Colors.white)
-          )
-      ),
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
+    return StreamBuilder<String>(
+      stream: stream,
+      builder: (context, snapshot) {
+        return TextField(
+          onChanged: onChanged,
+          decoration: InputDecoration(
             icon: Icon(icon, color: Colors.white,),
-            border: InputBorder.none,
             contentPadding: EdgeInsets.only(
                 left: 5,
                 right: 30,
@@ -32,12 +29,17 @@ class InputField extends StatelessWidget {
             hintStyle: TextStyle(
                 color: Colors.white
             ),
-        ),
-        style: TextStyle(
+            errorText: snapshot.hasError ? snapshot.error : null,
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.pinkAccent),
+            ),
+          ),
+          style: TextStyle(
             color: Colors.white
-        ),
-        obscureText: obscure,
-      ),
+          ),
+          obscureText: obscure,
+        );
+      }
     );
   }
 }

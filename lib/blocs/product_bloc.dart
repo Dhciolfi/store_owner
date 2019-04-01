@@ -1,10 +1,11 @@
 import 'dart:async';
 
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rxdart/rxdart.dart';
 
-class ProductBloc {
+class ProductBloc extends BlocBase {
 
   final _createdProductController = BehaviorSubject<bool>();
   final _loadingController = BehaviorSubject<bool>();
@@ -105,6 +106,7 @@ class ProductBloc {
     }
   }
 
+  @override
   void dispose(){
     _createdProductController.close();
     _loadingController.close();
