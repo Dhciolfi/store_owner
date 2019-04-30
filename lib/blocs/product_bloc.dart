@@ -55,6 +55,10 @@ class ProductBloc extends BlocBase {
     unsavedData["price"] = double.parse(text);
   }
 
+  void setImages(List images){
+    unsavedData["images"] = images;
+  }
+
   void deleteProduct(){
     product.reference.delete();
   }

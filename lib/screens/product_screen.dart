@@ -107,7 +107,14 @@ class _ProductScreenState extends State<ProductScreen> with ProductValidators{
                           fontSize: 12,
                         ),
                       ),
-                      ImagesWidget(snapshot.data["images"]),
+                      ImagesWidget(
+                        context: context,
+                        initialValue: snapshot.data["images"],
+                        onSaved: _productBloc.setImages,
+                        validator: (images){
+                          if(images.isEmpty) return "Adicione imagens";
+                        },
+                      ),
                       SizedBox(height: 16,),
                       TextFormField(
                         style: _fieldStyle,
