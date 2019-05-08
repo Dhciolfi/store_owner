@@ -2,13 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:store_owner/blocs/orders_bloc.dart';
 import 'package:store_owner/blocs/users_bloc.dart';
-import 'package:store_owner/screens/edit_category_screen.dart';
 import 'package:store_owner/screens/login_screen.dart';
 import 'package:store_owner/tabs/orders_tab.dart';
 import 'package:store_owner/tabs/products_tab.dart';
 import 'package:store_owner/tabs/users_tab.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
+import 'package:store_owner/widgets/edit_category_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
 
@@ -149,10 +149,9 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Icon(Icons.add),
           backgroundColor: Colors.pinkAccent,
           onPressed: (){
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (context)=>
-                  EditCategoryScreen()
-              )
+            showDialog(
+                context: context,
+                builder: (context) => EditCategoryDialog()
             );
           },
         );

@@ -15,8 +15,8 @@ class _ProductsTabState extends State<ProductsTab> with AutomaticKeepAliveClient
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 16),
-      child: FutureBuilder<QuerySnapshot>(
-        future: Firestore.instance.collection("products").getDocuments(),
+      child: StreamBuilder<QuerySnapshot>(
+        stream: Firestore.instance.collection("products").snapshots(),
         builder: (context, snapshot){
           if(!snapshot.hasData) return Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(Colors.pinkAccent),),);
           return ListView.builder(
